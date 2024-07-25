@@ -1,0 +1,21 @@
+name: Enforce Merge Policy
+
+on:
+  pull_request:
+    branches:
+      - qa
+
+jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        run: |
+          if [[ "${{ github.event.pull_request.head.ref }}" == "develop" ]]; then
+            echo "Merging from develop does not require code owner approval."
+            exit 0
+          else
+            echo "Merging from a branch other than develop requires code owner approval."
+            echo "##[error]Requires code owner approval"
+            exit 1
+          fi
